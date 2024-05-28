@@ -1,15 +1,29 @@
 services:
+  #Create a simple python container first
   pythonapp:
+    #build  and run the container from the contents of the /python folder
     build: ./python/
+    #let the container sleep for 10 seconds before running the app.py script. This is done to give time to have the mysql container built, run and the service up.
     command: sh -c "sleep 10s ; python3 ./app.py"
+    #Indicate that the python container is dependent on the mysql container
     depends_on:
       - mysql
-    
+  
+  #create a simple mysql container
   mysql:
+    #build  and run the container from the contents of the /mysql folder
     build: ./mysql/
+
+    #Ensure the backend mysql container is always up and running 
     restart: always 
+
+    #Enter the root password and database to use using enviroment variables 
     environment:
       MYSQL_ROOT_PASSWORD: 'root_p@ss_1'
       MYSQL_DATABASE: 'test_db'
+    
+    #Map the container's port 3306 to the host port 3306 
     ports:
       - '3306:3306'
+
+    #Note: both the services will be running on the same network by default so the mysql service(container) will be visible ot the python service(container)
